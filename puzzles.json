@@ -1,0 +1,50 @@
+[
+  {
+    "id": "Areshchenko vs Zhigalko, 2013",
+    "fen": "r3k2r/p3bpp1/2q1p1b1/1ppPP1B1/3n3P/5NR1/PP2NP2/K1QR4 b kq - 0 1",
+    "mate_in": 2,
+    "solution": ["Nb3+", "axb3", "Qa6#"]
+  },
+  {
+    "id": "Pridorozhni vs Kuzubov, 2013",
+    "fen": "1r5k/3b3p/3p3b/2qPp3/Pnp4P/Q1N5/8/K5RR b - - 0 1",
+    "mate_in": 2,
+    "solution": ["Nc2+", "Ka2", "Qxa3#"]
+  },
+  {
+    "id": "Kotanjian vs Petrosian, 2013",
+    "fen": "1k1r4/pp5R/2p5/P5p1/7b/4Pq2/1PQ2P2/3NK3 b - - 0 1",
+    "mate_in": 2,
+    "solution": ["Rxd1+", "Qxd1", "Qxf2#"]
+  },
+  {
+    "id": "Kursova vs Blagojevic, 2013",
+    "fen": "1r3k2/4R3/1p4Pp/p1pN1p2/2Pn1K2/1P6/1P6/8 w - - 1 0",
+    "mate_in": 2,
+    "solution": ["g7+", "Kg8", "Nf6#"]
+  },
+  {
+    "id": "Martynkova vs Daulyte, 2013",
+    "fen": "5bk1/R4p1p/6p1/8/3p2K1/1Q4P1/1P3P1q/2r5 b - - 0 1",
+    "mate_in": 2,
+    "solution": ["Qh5+", "Kf4", "Qf5#"]
+  },
+  {
+    "id": "Pavlidou vs Bejatovic, 2013",
+    "fen": "3rr2k/pp1b2b1/4q1pp/2Pp1p2/3B4/1P2QNP1/P6P/R4RK1 w - - 1 0",
+    "mate_in": 2,
+    "solution": ["Qxh6+", "Kg8", "Qxg7#"]
+  },
+  {
+    "id": "Foisor vs Velickovski-Kostic, 2013",
+    "fen": "3r2k1/6pp/1nQ1R3/3r4/3N2q1/6N1/n4PPP/4R1K1 w - - 1 0",
+    "mate_in": 2,
+    "solution": ["Re8+", "Kf7", "R1e7#"]
+  },
+  {
+    "id": "Srebrnic vs Rogule, 2013",
+    "fen": "5bk1/6p1/5PQ1/pp4Pp/2p4P/P2r4/1PK5/8 w - - 1 0",
+    "mate_in": 2,
+    "solution": ["f7+", "Kh8", "Qxh5#"]
+  }
+]
