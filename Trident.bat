@@ -7,5 +7,5 @@ REM This makes the script portable, so it doesn't matter where you place the Tri
 
 REM Execute the engine:
 REM 1. Call the pypy3.exe located in the 'pypy' subfolder.
-REM 2. Pass main.py as the script to run.
-"%~dp0pypy\pypy3.11.exe" "%~dp0main.py"
+REM 2. Pass mainv1.py as the script to run.
+"%~dp0pypy\pypy3.11.exe" "%~dp0mainv1.py"

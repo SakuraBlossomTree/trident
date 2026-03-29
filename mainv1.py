@@ -10,6 +10,8 @@ import time
 
 board = Board()
 nodes_searched = 0
+search_start = 0
+time_limit = 0
 
 # Piece values and PST 
 # https://www.chessprogramming.org/Simplified_Evaluation_Function  Got them from this link
@@ -140,20 +142,18 @@ def evaluate_piece(piece, square, end_game):
 
 # We then evaluate the board
 # We do this by first checking the endgame, if there are no queens left then we are in endgame 
-# We then chess for every square in the board that is there a piece (I know this is very expensive but that is all I can think about)
+# We then check for every square in the board that is there a piece (I know this is very expensive but that is all I can think about)
 # We then get the the value of the piece and it's positional value and add those up, we also flip the value for black
-# We then calculate the mobility, which is then by seeing how many legal_moves are there and calculate for both white and black
+# We then calculate the mobility, which is done by seeing how many legal_moves are there and calculate for both white and black
 # We then return the final_eval
 
 def evaluate_board(board):
     total = 0
 
-    is_endgame = True
-    if board.pieces(chess.QUEEN, chess.WHITE) and board.pieces(chess.QUEEN, chess.BLACK):
-        is_endgame = False
-
-    queens = board.pieces(chess.QUEEN, chess.WHITE) or board.pieces(chess.QUEEN, chess.BLACK)
-    is_endgame = not queens
+    is_endgame = (
+        not board.pieces(chess.QUEEN, chess.WHITE) and
+        not board.pieces(chess.QUEEN, chess.BLACK)
+    )
 
     for square in chess.SQUARES:
         piece = board.piece_at(square)
@@ -252,7 +252,7 @@ def quiescene_search(board, alpha, beta):
     return best_value
 
 # This is the search logic it uses negamax as the search algorithm
-# We use alpha-beta pruning to nott search if a board position gives opponenet an advantage
+# We use alpha-beta pruning to not search if a board position gives opponenet an advantage
 # This is also an implementation of fail-hard
 
 def negamax(board, depth, alpha, beta):
@@ -260,6 +260,9 @@ def negamax(board, depth, alpha, beta):
     global nodes_searched
     nodes_searched += 1 
     MATE_SCORE = 99999999 
+    
+    if time.time() - search_start >= time_limit:
+        raise TimeoutError
     
     if board.is_checkmate():
         return -(MATE_SCORE + depth)
@@ -328,7 +331,7 @@ def uci_loop():
             command = parts[0]
             
             if command == "uci":
-                sys.stdout.write("id name Trident\n")
+                sys.stdout.write("id name Tridentv1\n")
                 sys.stdout.write("id author SakuraBlossomTree\n")
                 sys.stdout.write("uciok\n")
                 sys.stdout.flush()
@@ -361,18 +364,60 @@ def uci_loop():
                             # log_message(f"ERROR: Invalid move {move_str} for position {board.fen()}")
                             pass
 
-            elif command == "go":
-                global nodes_searched
+            elif command == "go":                
+                global nodes_searched, time_limit, search_start
                 nodes_searched = 0
                 start_time = time.time()
-                MAX_DEPTH = 4 
+                # MAX_DEPTH = 4 
 
+                wtime = btime = None
+                winc = binc = 0 
+
+                if "wtime" in parts:
+                    wtime = int(parts[parts.index("wtime") + 1])
+                if "btime" in parts:
+                    btime = int(parts[parts.index("btime") + 1])
+                if "winc" in parts:
+                    winc = int(parts[parts.index("winc") + 1])
+                if "binc" in parts:
+                    binc = int(parts[parts.index("binc") + 1])
+
+                if board.turn == chess.WHITE:
+                    base = wtime
+                    inc = winc
+                else:
+                    base = btime
+                    inc = binc
+
+                time_limit = base / 20 + inc / 2
+                time_limit /= 1000
+                search_start = time.time()
 
                 if not banner_logged:
                     # log_message("--- Trident Engine v1.2 with depth 4 (endgame fix and quiescene optimization) ---")
                     banner_logged = True
 
-                best_move, best_score = find_best_move(board, max_depth=MAX_DEPTH)
+                # best_move, best_score = find_best_move(board, max_depth=MAX_DEPTH)
+
+                depth = 1
+                best_move = None
+                best_score = 0
+                while True:
+                    try:
+                        move, score = find_best_move(board, depth)
+                        if move:
+                            best_move = move
+                            best_score = score
+                        elapsed = time.time() - search_start
+                        sys.stdout.write(
+                            f"info depth {depth} score cp {int(score)} nodes {nodes_searched} time {int(elapsed*1000)}\n"
+                        )
+                        sys.stdout.flush()
+                        depth += 1
+                        if time.time() - search_start >= time_limit:
+                            break
+                    except TimeoutError:
+                        break
 
                 end_time = time.time()
                 search_duration = end_time - start_time
@@ -381,7 +426,7 @@ def uci_loop():
                 # log_message(f"Search complete: {nodes_searched} nodes in {search_duration:.2f}s ({nps} NPS)")
                 # log_message(f"info depth {MAX_DEPTH} score cp {int(best_score)}")
 
-                sys.stdout.write(f"info depth {MAX_DEPTH} score cp {int(best_score)}\n")
+                sys.stdout.write(f"info depth {depth - 1} score cp {int(best_score)}\n")
                 sys.stdout.write(f"bestmove {best_move.uci()}\n")
                 sys.stdout.flush()
 
