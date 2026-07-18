@@ -38,7 +38,7 @@ Run the engine:
 python main.py
 ```
 
-To use Trident with a chess GUI, add the engine executable or Python entry point through your preferred UCI-compatible interface.
+To use Trident with a chess GUI, add the Trident.bat executable through your preferred UCI-compatible interface.
 
 ## Built With
 
